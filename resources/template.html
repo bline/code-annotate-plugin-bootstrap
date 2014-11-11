@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en">
+<!-- ## resource/template.html -->
+<!-- ### Html Header -->
+<head>
+  <%= plugins.renderFirst('title') %>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <%= plugins.render('meta') %>
+  <%= plugins.render('stylesheet') %>
+  <%= plugins.render('headRaw') %>
+  <%= plugins.render('css') %>
+</head>
+<body>
+  <div class="container">
+<!-- ### Main Header -->
+    <div id="header" class="jumbotron">
+      <h1><%= plugins.renderFirst('headerTitle') %><h1>
+      <p>
+        <%= plugins.render('headerDescription') %>
+      </p>
+    </div>
+<!-- 
+### Navigation
+This navigation bar is affixed to the top of the screen once
+the browser scrolls past the [Main Header].
+
+XXX Move to side menu
+-->
+    <div id="nav">
+      <ul class="nav nav-tabs" role="tablist">
+        <!-- Loop over each file and present a navigation link to activate the tab.  -->
+        <% _.forEach(files, function (file, i) { %>
+          <li role="presentation" class="<%= i === 0 ? 'active' : '' %>">
+            <a href="#<%= file.id %>" role="tab" data-toggle="tab"><%= file.relative %></a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    <div class="tab-content file-content">
+      <% _.forEach(files, function (file, i) { %>
+        <div role="tabpanel" class="tab-pane fade<%= i === 0 ? ' in active' : '' %>" id="<%= file.id %>">
+          <table class="file-table">
+            <!-- file.sections is an array of sections. Each one contains the -->
+            <!-- html for displaying the documention and code associated with it. -->
+            <% _.forEach(file.sections, function (section, i) { %>
+              <tr>
+                <td class="file-docs">
+                  <%= section.docsHl %>
+                </td>
+                <!-- If no code text, leave an empty cell for formatting -->
+                <td class="file-code">
+                  <% if (!(/^\s*$/).test(section.codeText)) { %>
+                    <%= section.codeHl %>
+                  <% } else { %>
+                    &nbsp;
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </table>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+  <%= plugins.render('script') %>
+<!--
+Affix the navbar to the top
+-->
+  <script type="text/javascript">
+    $(function () {
+      var $header = $('#header');
+      $('#nav').affix({
+        offset: {
+          top: function () {
+            return $header.offset().top + $header.outerHeight(true);
+          }
+        }
+      });
+    });
+  </script>
+  <%= plugins.render('initScript') %>
+  <div id="footer">
+    <div class="container">
+      <p class="muted">
+        <%= plugins.render('footer') %>
+      </p>
+    </div>
+  </div>
+</body></html>  
